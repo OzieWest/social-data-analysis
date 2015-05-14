@@ -1,0 +1,24 @@
+{
+  "name": "social-data-analysis",
+  "version": "1.0.0",
+  "description": "Scripts analysis of social data (Vkontakte)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soramusoka/social-data-analysis.git"
+  },
+  "author": "soramusoka@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soramusoka/social-data-analysis/issues"
+  },
+  "homepage": "https://github.com/soramusoka/social-data-analysis",
+  "dependencies": {
+    "async": "^0.9.0",
+    "querystring": "^0.2.0",
+    "request": "^2.55.0"
+  }
+}
