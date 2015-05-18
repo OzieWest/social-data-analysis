@@ -7,17 +7,35 @@ function method(name: string): string {
 	return 'https://api.vk.com/method/' + name;
 }
 
-function getUserQuery(uid: string): Query {
-	return {
+module.exports.getUser = (uid, callback) => {
+	var query = qs.stringify({
 		uids: uid,
-		fields: 'nickname,screen_name,sex,bdate,city,country,timezone,photo,photo_medium,photo_big,has_mobile,contacts,education,online,counters,relation,last_seen,activity,can_write_private_message,can_see_all_posts,can_post,universities'
-	};
-}
-
-module.exports.getUserData = (uid, callback) => {
-	var query = getUserQuery(uid);
-	var url = method('users.get?') + qs.stringify(query);
+		fields: 'sex,bdate,city,country,timezone,has_mobile,contacts,counters,last_seen'
+	});
+	var url = method('users.get?') + query;
 	request(url, (e, r, body) => {
-		callback(e, body);
+		if (e) {
+			return callback(e);
+		}
+		var data = JSON.parse(body);
+		callback(e, data);
+	});
+};
+
+module.exports.getFriends = (uid, callback) => {
+	var query = qs.stringify({
+		user_id: uid,
+		order: 'name',
+		count: 1000,
+		offset: 0,
+		fields: 'sex,bdate,city,country,counters,has_mobile'
+	});
+	var url = method('friends.get?') + query;
+	request(url, (e, r, body) => {
+		if (e) {
+			return callback(e);
+		}
+		var data = JSON.parse(body);
+		callback(e, data);
 	});
 };

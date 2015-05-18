@@ -4,7 +4,8 @@ Scripts analysis of social data (Vkontakte)
 ## Goals
 
 #### General 
-- Number of friends 
+- Number of friends
+	- check: gender, has_mobile 
 - Connections between friends
 - Number of photos
 - Number of personal info

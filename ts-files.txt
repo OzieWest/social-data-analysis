@@ -4,4 +4,5 @@ c:\_main\github\social-data-analysis\types\async\async.d.ts
 c:\_main\github\social-data-analysis\types\form-data\form-data.d.ts
 c:\_main\github\social-data-analysis\types\node\node.d.ts
 c:\_main\github\social-data-analysis\types\request\request.d.ts
+c:\_main\github\social-data-analysis\utils\log_factory.ts
 c:\_main\github\social-data-analysis\utils\repository.ts
