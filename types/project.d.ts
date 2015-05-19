@@ -1,10 +1,8 @@
-/// <reference path="async/async.d.ts" />
-/// <reference path="node/node.d.ts" />
-/// <reference path="request/request.d.ts" />
-
 declare var qs;
+declare var require;
+declare var module;
 
 interface Query {
-	uids: String,
-	fields: String
+    uids: String;
+    fields: String;
 } 
