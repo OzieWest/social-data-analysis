@@ -39,3 +39,20 @@ module.exports.getFriends = (uid, callback) => {
 		callback(e, data);
 	});
 };
+
+module.exports.getSubscriptions = (uid, callback) => {
+	var query = qs.stringify({
+		user_id: uid,
+		extended: 1,
+		count: 200,
+		offset: 0
+	});
+	var url = method('users.getSubscriptions?') + query;
+	request(url, (e, r, body) => {
+		if (e) {
+			return callback(e);
+		}
+		var data = JSON.parse(body);
+		callback(e, data);
+	});
+};

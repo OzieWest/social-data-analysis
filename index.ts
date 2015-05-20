@@ -9,10 +9,16 @@ var logger = require('./utils/log_factory').getLogger();
 var selections = require('./selection');
 var mockedData = require('./mocked_data');
 
-function createProfile(data) {
-    var profile = data.usersGet.response[0];
-    var friends = data.friendsGet.response || [];
+var tempFolder = 'temp/';
 
+function createProfile(data) {
+    var profile = data.user.response[0];
+    var friends = data.friends.response || [];
+    var subscriptionsCount = data.subscriptions.response.length || 0;
+
+    profile['subscriptions'] = {
+        count: subscriptionsCount
+    };
     profile['friends'] = {
         count: friends.length,
         man: {
@@ -30,21 +36,27 @@ function createProfile(data) {
         noMobile: {
             count: friends.filter((item) => item.has_mobile !== 1).length,
             uids: friends.filter(item => item.has_mobile !== 1).map((item) => item.uid)
+        },
+        place: {
+            sameCountry: friends.filter((item) => item.country == profile.country).length,
+            sameCity: friends.filter((item) => item.city == profile.city).length
         }
     };
     return profile;
 }
-var tempFolder = 'temp/';
 
-selections.humans.forEach((uid) => {
+function collectProfileData(uid, finalCallback) {
     async.auto({
-        'usersGet': [(callback) => {
+        'user': [(callback) => {
             repo.getUser(uid, callback);
         }],
-        'friendsGet': [(callback) => {
+        'friends': [(callback) => {
             repo.getFriends(uid, callback);
         }],
-        'saveData': ['usersGet', 'friendsGet', (callback, results) => {
+        'subscriptions': [(callback) => {
+            repo.getSubscriptions(uid, callback);
+        }],
+        'saveData': ['user', 'friends', 'subscriptions', (callback, results) => {
             fs.writeFile(tempFolder + uid + '.json', JSON.stringify(results), 'utf-8', callback);
         }],
         'profile': ['saveData', (callback, results) => {
@@ -54,10 +66,20 @@ selections.humans.forEach((uid) => {
         'saveProfile': ['profile', (callback, results) => {
             fs.writeFile(tempFolder + uid + '-profile.json', JSON.stringify(results.profile), 'utf-8', callback);
         }]
-    }, (err, results) => {
-        if (err) {
-            return logger.error(err);
-        }
+    }, finalCallback);
+}
+
+/** Run */
+var allData = [];
+async.eachLimit(selections.humans, 10, function (uid, callback) {
+    collectProfileData(uid, function (err, result) {
         logger.debug('Done: ', uid);
+        allData.push(result.profile);
+        callback(err, result);
     });
+}, function (err) {
+    if (err) {
+        return logger.error(err);
+    }
+    logger.debug('Data: ', allData.length);
 });
